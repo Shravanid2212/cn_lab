@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<unistd.h>
+#include<netinet/in.h>
+
+int main(){
+
+	int clientsocket,bindstatus;
+	struct sockaddr_in  serveraddress;
+
+	clientsocket=socket(AF_INET,SOCK_STREAM,0);
+	if(clientsocket<0){
+		printf("Failed to create a socket");
+	}else{
+		printf("Socket created");
+	}
+
+	serveraddress.sin_family=AF_INET;
+	serveraddress.sin_port=htons(9000);
+	serveraddress.sin_addr.s_addr=INADDR_ANY;
+
+	bindstatus=connect(clientsocket,(struct sockaddr*)&serveraddress,sizeof(serveraddress));
+	if(bindstatus<0){
+		printf("binding failed");
+	}else{
+		printf("binded successfully");
+	}
+	
+	char serverresponse[256];
+	int n= sizeof(serverresponse);
+	recv(clientsocket,&serverresponse,n,0);
+	printf("The response from server is %s\n", serverresponse);
+
+	close(clientsocket);
+	return 0;
+
+
+}
